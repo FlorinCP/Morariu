@@ -44,3 +44,14 @@
     position: absolute;
     background-color: black;
 }
+
+.info{
+    height: 20px;
+    width: 20px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-25%, -130%);
+    font-weight: bold;
+}

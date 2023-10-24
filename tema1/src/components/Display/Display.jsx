@@ -196,7 +196,11 @@ function Display(props) {
                   transform: "translate(-50%, -50%)",
                   cursor: "pointer",
                 }}
-              ></div>
+              >
+                <div className={style.info}>
+                  {point.id + 1}
+                </div>
+              </div>
             );
           })}
       </div>
@@ -246,16 +250,15 @@ function Display(props) {
       point.centroid = distanceArray.indexOf(Math.min(...distanceArray)) + 1;
     });
 
-    const valueArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-    intermediatePoints.forEach((point) => {
-      valueArray[point.centroid - 1] = valueArray[point.centroid - 1] + 1;
-    });
+    // const valueArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    //
+    // intermediatePoints.forEach((point) => {
+    //   valueArray[point.centroid - 1] = valueArray[point.centroid - 1] + 1;
+    // });
+    //
+    // console.log(valueArray);
 
     setPoints(intermediatePoints);
-    console.log(valueArray);
-
-    return valueArray;
   };
 
   function computeCentrulDeGreutate() {
