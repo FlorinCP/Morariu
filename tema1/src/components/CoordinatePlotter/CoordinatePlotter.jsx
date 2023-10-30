@@ -20,32 +20,34 @@ function CoordinatePlotter({ dataPoints, isKnown, centroizi }) {
     if (isKnown) {
       color = getPointColor(point.zone);
     } else {
-      color = "black";
+      color = point.centroid ? getPointColor(point.centroid) : "black";
     }
 
     return { x: screenX, y: screenY, color: color };
   }
 
-    function getPointColor(pointZone) {
-        switch (pointZone) {
-            case 1:
-                return "red";
-            case 2:
-                return "blue";
-            case 3:
-                return "green";
-            case 4:
-                return "orange";
-            case 5:
-                return "pink";
-            case 6:
-                return "slategray";
-            case 7:
-                return "pink";
-            case 8:
-                return "yellow";
-        }
+  function getPointColor(pointZone) {
+    switch (pointZone) {
+      case 1:
+        return "red";
+      case 2:
+        return "blue";
+      case 3:
+        return "green";
+      case 4:
+        return "orange";
+      case 5:
+        return "pink";
+      case 6:
+        return "slategray";
+      case 7:
+        return "pink";
+      case 8:
+        return "yellow";
+      default:
+        return "black";
     }
+  }
 
   return (
     <div className={style.plotArea}>
@@ -88,7 +90,7 @@ function CoordinatePlotter({ dataPoints, isKnown, centroizi }) {
                 cursor: "pointer",
               }}
             >
-              <div className={style.info}>{point.id + 1}</div>
+              <div className={style.info} style={{color: getPointColor(point.id + 1)}}>{point.id + 1}</div>
             </div>
           );
         })}

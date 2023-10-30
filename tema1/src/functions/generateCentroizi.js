@@ -124,6 +124,7 @@ export function computeCentrulDeGreutate(points,centroizi) {
  * Calculeaza costul unei epoci
  *
  * @param centroizi
+ * @param points
  * @return {any}
  */
 export function computeCostFunction(centroizi,points) {
@@ -138,14 +139,18 @@ export function computeCostFunction(centroizi,points) {
     const suma = new Array(centroizi.length).fill(0);
 
     for (let i = 0; i < valueArray.length; i++) {
-        console.log(valueArray[i]);
         valueArray[i].forEach((point) => {
             suma[i] = suma[i] + calculateEuclideanDistance(point, centroizi[i]);
         });
     }
 
-    return suma.reduce(
+    const sum = suma.reduce(
         (accumulator, currentValue) => accumulator + currentValue,
         0,
     );
+
+    return {
+        sum : sum,
+        valueArray : valueArray
+    }
 }

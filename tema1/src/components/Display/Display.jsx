@@ -18,6 +18,7 @@ function Display(props) {
   const [points, setPoints] = useState([]);
   const [centroizi, setCentroizi] = useState([]);
   const [suma,setSuma] = useState()
+  const [valueArray,setValueArray] = useState([])
 
   const handleGenerarePuncte = () =>{
     const intermediatePoints = generateCoordinates(pointsCount)
@@ -36,10 +37,17 @@ function Display(props) {
 
   const handleComputeCentrulDeGreutate = () =>{
     const centroiziModificati = computeCentrulDeGreutate(points,centroizi)
-    const suma = computeCostFunction(centroiziModificati,points)
+    const { sum, valueArray } = computeCostFunction(centroiziModificati, points);
     setCentroizi(centroiziModificati)
-    setSuma(suma)
+    setSuma(sum)
+    setValueArray(valueArray)
   }
+
+  useEffect(() => {
+    if (valueArray){
+      console.log(valueArray)
+    }
+  }, [valueArray]);
 
   function ruleazaAutomat() {
     let intermediatePoints = points;
@@ -73,8 +81,32 @@ function Display(props) {
       console.log(iterations);
     } while (cont && iterations < 100);
 
-    setIterations(iterations)
+    setPoints(somePoints)
+    setIterations(iterations + 1)
     setCentroizi(centroiziArray);
+  }
+
+  function getPointColor(pointZone) {
+    switch (pointZone) {
+      case 1:
+        return "red";
+      case 2:
+        return "blue";
+      case 3:
+        return "green";
+      case 4:
+        return "orange";
+      case 5:
+        return "pink";
+      case 6:
+        return "slategray";
+      case 7:
+        return "pink";
+      case 8:
+        return "yellow";
+      default:
+        return "black";
+    }
   }
 
   const [iterations,setIterations] = useState()
@@ -129,6 +161,15 @@ function Display(props) {
           <button onClick={ruleazaAutomat}>Ruleaza Automat</button>
         </div>
         <div>{iterations}</div>
+      </div>
+      <div>
+        {
+          centroizi.map((centroid, index) => (
+              <div key={index} className={style.centroidInfo} style={{backgroundColor: getPointColor(centroid.id + 1)}}>
+                centroid {index + 1}{" "} { ""}
+              </div>
+          ))
+        }
       </div>
       <CoordinatePlotter
         dataPoints={points}

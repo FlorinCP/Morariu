@@ -55,3 +55,14 @@
     transform: translate(-25%, -130%);
     font-weight: bold;
 }
+
+.centroidInfo{
+    width: 20vw;
+    height: 70px;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
