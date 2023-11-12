@@ -18,7 +18,11 @@ import {
 import { getPointsFromFile } from "../../functions/readPointsFile.js";
 import CoordinatePlotterCentroizi from "../CoordinatePlotter/CoordinatePlotterCentroizi.jsx";
 import CoordinatePlotterNeuroni from "../CoordinatePlotter/CoordinatePlotterNeuroni.jsx";
-import {generateNeuroni} from "../../functions/generateNeuroni.js";
+import {
+  coeficinetInvatare,
+  computeDistanceNeuroni,
+  generateNeuroni, getCloseNeurons, vecinatateFunction
+} from "../../functions/generateNeuroni.js";
 
 function Display(props) {
   const [zoneCount, setZoneCout] = useState("");
@@ -28,6 +32,21 @@ function Display(props) {
   const [neuroni, setNeuroni] = useState([]);
   const [suma, setSuma] = useState();
   const [valueArray, setValueArray] = useState([]);
+  const [epocaCurenta,setEpocaCurenta] = useState(1)
+  const [epociDorite,setEpociDorite] = useState(10)
+  const [vecinatate,setVecinatate] = useState()
+  const [coeficientInvatare,setCoeficientInvatare] = useState()
+
+  useEffect(() => {
+      if (epocaCurenta !== null || epociDorite !== null){
+        const vecinatateIntermediate = vecinatateFunction(epocaCurenta,epociDorite)
+        console.log("vecinatatea ",vecinatateIntermediate)
+        setVecinatate(vecinatateIntermediate)
+        const coeficinetInvatareIntermediate = coeficinetInvatare(epocaCurenta,epociDorite)
+        console.log("coeficientInvatare ",coeficinetInvatareIntermediate)
+        setCoeficientInvatare(coeficinetInvatareIntermediate)
+      }
+  }, [epocaCurenta,epociDorite]);
 
   // useEffect for loading points from file
   useEffect(() => {
@@ -52,6 +71,12 @@ function Display(props) {
     const pointsAssignedToCentroids = computeDistance(points, centroizi);
     setPoints(pointsAssignedToCentroids);
   };
+
+  const handleComputedistanceNeuroni = () =>{
+    const [closestNeuron,point] = computeDistanceNeuroni(points,neuroni)
+    console.log(closestNeuron, point)
+    getCloseNeurons(closestNeuron,neuroni,vecinatate)
+  }
 
   const handleNeuroni = () =>{
     const intermediateNeuroni = generateNeuroni(100);
@@ -142,9 +167,13 @@ function Display(props) {
   function SOMHeader() {
     return (
       <div className={style.header}>
-        <div>
+          <div className={style.flexInline}>
+            <p>Cate epoci dorim ? </p>
+            <input type="text" value={epociDorite} onChange={(e)=>setEpociDorite(e.target.value)}/>
+            <p>{epociDorite}</p>
+          </div>
           <button onClick={handleNeuroni}>Genereaza neuroni</button>
-        </div>
+          <button onClick={handleComputedistanceNeuroni} >Calculeaza distanta</button>
       </div>
     );
   }

@@ -23,6 +23,15 @@
   gap: 60px;
 }
 
+.flexInline{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+  height: 30px;
+}
+
 .header2 {
     width: 100vw;
     height: 25vh;
