@@ -1,3 +1,37 @@
+import {getPointColor} from "./getPointColor.js";
+
+/**
+ * Function for converting point coordinates to screen coordinates
+ *
+ * @param point
+ * @param isKnown
+ * @return {{color: string, x: number, y: number}}
+ */
+export  function convertToScreenCoordinates(point, isKnown) {
+    const screenWidth = 900; // for example
+    const screenHeight = 900; // for example
+    const dataMinX = -300; // adjust as needed
+    const dataMaxX = 300; // adjust as needed
+    const dataMinY = -300; // adjust as needed
+    const dataMaxY = 300; // adjust as needed
+
+    const screenX =
+        ((point.x - dataMinX) / (dataMaxX - dataMinX)) * screenWidth;
+    const screenY =
+        screenHeight -
+        ((point.y - dataMinY) / (dataMaxY - dataMinY)) * screenHeight; // Subtract from screenHeight to flip the Y axis if necessary
+
+    let color;
+    if (isKnown) {
+        color = getPointColor(point.zone);
+    } else {
+        color = point.centroid ? getPointColor(point.centroid) : "black";
+    }
+
+    return { x: screenX, y: screenY, color: color };
+}
+
+
 /**
  *
  * Generam punctele de lucru in functie de cate zone avem si respectand formula lui Gauss
@@ -79,7 +113,7 @@ export function getRandomBetweenNegative300And300() {
  * @return {number}
  */
 function getRandomPa() {
-    return Math.min(1, ourRandom(0.0003) * 1.000000001);
+    return Math.min(1, ourRandom(0.0013) * 1.000000001);
 }
 
 /**

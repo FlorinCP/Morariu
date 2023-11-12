@@ -100,7 +100,6 @@ export function part3(centroziiArray,points) {
     const suma = new Array(centroziiArray.length).fill(0);
 
     for (let i = 0; i < valueArray2.length; i++) {
-        console.log(valueArray2[i]);
         valueArray2[i].forEach((point) => {
             suma[i] = suma[i] + calculateEuclideanDistance(point, centroziiArray[i]);
         });
