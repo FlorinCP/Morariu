@@ -64,10 +64,16 @@ export function vecinatateFunction(epocaCurenta, epociDorite) {
   return 6.1 * Math.exp(exponent);
 }
 
-export function computeDistanceNeuroni(points, neuroni) {
-  const intermediatePoints = points;
-  const point = intermediatePoints[getRandomPoint(intermediatePoints.length)];
-
+/**
+ * Alegem un punct random
+ * Pentru fiecare neuron calculam distanta Euclidiana dintre el si punct
+ *
+ *
+ * @param point punctul ales random
+ * @param neuroni lista cu neuronii
+ * @return {*[]}
+ */
+export function computeDistanceNeuroni(point, neuroni) {
   const distanceArray = [];
   neuroni.forEach((neuron, index) => {
     distanceArray[index] = calculateEuclideanDistance(point, neuron);
@@ -75,16 +81,29 @@ export function computeDistanceNeuroni(points, neuroni) {
 
   const indexOfMin = distanceArray.indexOf(Math.min(...distanceArray));
   const closestNeuron = neuroni[indexOfMin];
-
-  return [closestNeuron, point];
+  return closestNeuron;
 }
 
-function getRandomPoint(length) {
+/**
+ * Functie pentru a alege un punct random
+ *
+ * @param length lungimea vectorului de puncte
+ * @return {number}
+ */
+export function getRandomPointIndex(length) {
   const min = 0;
   const max = length;
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+/**
+ *Functie pentru a returna o lista cu neuronii din vecinatate
+ *
+ * @param closestNeuron neuronul in jurul caruia calculam vecinatatea
+ * @param neuroni lista cu toti neuronii
+ * @param vecinatate coeficientul de vecinatate
+ * @return {*[]}
+ */
 export function getCloseNeurons(closestNeuron, neuroni, vecinatate) {
   const vecinatateCoeficinet = Math.round(vecinatate);
   const closestNeuronCoords = closestNeuron.matrixCoord;
@@ -95,13 +114,18 @@ export function getCloseNeurons(closestNeuron, neuroni, vecinatate) {
     neuroni,
   );
 
-  const neuroniVecini = getNeuroniVecini(neuroni, vicinityArray);
-
-  return neuroniVecini
+  return getNeuroniVecini(neuroni, vicinityArray);
 }
 
+/**
+ * Pentru fiecare neuron verifica daca in lista de coordonate se afla coordonatele sale din .matrixCoord
+ *
+ * @param neuroni lista de neuroni
+ * @param coords lista de coordonate
+ * @return {*[]}
+ */
 function getNeuroniVecini(neuroni, coords) {
-  const intermediateArray = [];
+  const intermediateNeuronsArray = [];
 
   neuroni.forEach((neuron) => {
     const temp = coords.find(
@@ -110,12 +134,20 @@ function getNeuroniVecini(neuroni, coords) {
         coord.col === neuron.matrixCoord.col,
     );
     if (temp) {
-      intermediateArray.push(neuron);
+      intermediateNeuronsArray.push(neuron);
     }
   });
-  return intermediateArray;
+  return intermediateNeuronsArray;
 }
 
+/**
+ * Functie pentru a returna lista neuroniilor apropiati
+ *
+ * @param closestNeuronCoords coordonatele neuronuli in jurul caruia se realizeaza vecinatatea
+ * @param level gradul de vecinatate
+ * @param neuroni lista totala de neuroni
+ * @return {*[]}
+ */
 function generalVicinity(closestNeuronCoords, level, neuroni) {
   const width = Math.sqrt(neuroni.length);
   const x = closestNeuronCoords.row;
@@ -143,42 +175,6 @@ function generalVicinity(closestNeuronCoords, level, neuroni) {
   return generalLevelArray;
 }
 
-function getLevel1Vicinity(closestNeuronCoords) {
-  const level1VicinityArray = [];
-  const x = closestNeuronCoords.row;
-  const y = closestNeuronCoords.col;
-
-  let sus = { x: x - 1, y: y };
-  let jos = { x: x + 1, y: y };
-  let stanga = { x: x, y: y - 1 };
-  let dreapta = { x: x, y: y + 1 };
-  let ss = { x: x - 1, y: y - 1 };
-  let sj = { x: x + 1, y: y - 1 };
-  let ds = { x: x - 1, y: y + 1 };
-  let dj = { x: x + 1, y: y + 1 };
-
-  level1VicinityArray.push(sus, jos, stanga, dreapta, sj, ss, ds, dj);
-
-  return level1VicinityArray;
-}
-
-function transformToMatrix(array) {
-  const length = Math.sqrt(array.length);
-  const result = [];
-  let index = 0;
-
-  for (let i = 0; i < length; i++) {
-    const row = [];
-    for (let j = 0; j < length; j++) {
-      row.push(array[index]);
-      index++;
-    }
-    result.push(row);
-  }
-
-  return result;
-}
-
 function assignMatrixCoordsToNeuron(neuroni) {
   const width = Math.sqrt(neuroni.length);
   neuroni.forEach((neuron, index) => {
@@ -188,42 +184,56 @@ function assignMatrixCoordsToNeuron(neuroni) {
   console.log(neuroni);
 }
 
-function Kohonen(vecinatate,coeficientInvatare,point,neuron){
+/**
+ * Fumctio lui Kohonen
+ *
+ * @param vecinatate
+ * @param coeficientInvatare
+ * @param point
+ * @param neuron
+ * @return {*}
+ * @constructor
+ */
+function kohonenFormula(vecinatate, coeficientInvatare, point, neuron) {
+  const newCoords = { newX: null, newY: null };
 
-  const newCoords = {newX:null,newY:null}
+  newCoords.newX = neuron.x + coeficientInvatare * (point.x - neuron.x);
+  newCoords.newY = neuron.y + coeficientInvatare * (point.y - neuron.y);
 
-  newCoords.newX = neuron.x + coeficientInvatare*(point.x - neuron.x)
-  newCoords.newY = neuron.y + coeficientInvatare*(point.y - neuron.y)
+  neuron.x = newCoords.newX;
+  neuron.y = newCoords.newY;
 
-  neuron.x = newCoords.newX
-  neuron.y = newCoords.newY
-
-  return neuron
+  return neuron;
 }
 
-export function getNewNeuroni(point,neuroniVecini,vecinatate,coeficientInvatare){
-  const intermediateArray = []
-    neuroniVecini.forEach((neuron)=>{
-     const result = Kohonen(vecinatate,coeficientInvatare,point,neuron)
-      intermediateArray.push(result)
-    })
+/**
+ * Functia ce aplica pe fiecare neuron vecin formula lui Kohonen
+ *
+ * @param point punctul ales random
+ * @param neuroniVecini neuronii vecini ai neuronului cel mai apropiat de puncul ales random
+ * @param vecinatate coeficientul de vecinatate
+ * @param coeficientInvatare
+ * @return {*[]}
+ */
+export function getNewNeuroni(
+  point,
+  neuroniVecini,
+  vecinatate,
+  coeficientInvatare,
+) {
+  const intermediateArray = [];
+  neuroniVecini.forEach((neuron) => {
+    let result;
+    result = kohonenFormula(vecinatate, coeficientInvatare, point, neuron);
+    intermediateArray.push(result);
+  });
 
-  return intermediateArray
+  return intermediateArray;
 }
 
-export function replaceNeuroni(oldNeuroni,newNeuroni){
+export function replaceNeuroni(oldNeuroni, newNeuroni) {
+  const duplicatesNeuroni = oldNeuroni.concat(newNeuroni)
+  const uniqueNeuroni = [...new Set(duplicatesNeuroni)]
 
-  const intermediateNeuroni = []
-
-  oldNeuroni.forEach((oldN)=>{
-    newNeuroni.forEach((newN) =>{
-      if (oldN.id === newN.id){
-        intermediateNeuroni.push(newN)
-      } else {
-        intermediateNeuroni.push(oldN)
-      }
-    })
-  })
-
-  return intermediateNeuroni
+  return uniqueNeuroni;
 }

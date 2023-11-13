@@ -21,7 +21,7 @@ import CoordinatePlotterNeuroni from "../CoordinatePlotter/CoordinatePlotterNeur
 import {
   coeficinetInvatare,
   computeDistanceNeuroni,
-  generateNeuroni, getCloseNeurons, getNewNeuroni, replaceNeuroni, vecinatateFunction
+  generateNeuroni, getCloseNeurons, getNewNeuroni, getRandomPointIndex, replaceNeuroni, vecinatateFunction
 } from "../../functions/generateNeuroni.js";
 
 function Display(props) {
@@ -72,13 +72,25 @@ function Display(props) {
     setPoints(pointsAssignedToCentroids);
   };
 
-  // iti calculeaza neuronii updatati
+  /**
+   * Calculeaza urmatoarea pozitie a neuroniilor
+   *
+   */
   const handleComputedistanceNeuroni = () =>{
-    const [closestNeuron,point] = computeDistanceNeuroni(points,neuroni)
-    console.log(closestNeuron, point)
+    const randomPointIndex = getRandomPointIndex(points.length)
+    const randomPoint = points[randomPointIndex]
+    const closestNeuron = computeDistanceNeuroni(randomPoint,neuroni)
+
+    console.log("neuronii vechi sunt : ",neuroni)
     const neuroniiVecini = getCloseNeurons(closestNeuron,neuroni,vecinatate)
-    const newNeuroni = getNewNeuroni(point,neuroniiVecini,vecinatate,coeficientInvatare)
-    const finalNeuroni =  replaceNeuroni(newNeuroni,neuroniiVecini)
+
+    console.log("neuronii vecini ",neuroniiVecini)
+
+    const newNeuroni = getNewNeuroni(randomPoint,neuroniiVecini,vecinatate,coeficientInvatare)
+    const finalNeuroni =  replaceNeuroni(neuroni,newNeuroni)
+
+    console.log("neuronii noi ",newNeuroni)
+    console.log("neuronii finali", finalNeuroni)
 
     setNeuroni(finalNeuroni)
     setEpocaCurenta(prevState => prevState + 1)
