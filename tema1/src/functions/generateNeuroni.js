@@ -24,7 +24,6 @@ export function generateNeuroni(neuroniCount) {
 
   assignMatrixCoordsToNeuron(neuroniArray);
 
-
   return [...neuroniArray];
 }
 
@@ -90,8 +89,77 @@ export function getCloseNeurons(closestNeuron, neuroni, vecinatate) {
   const vecinatateCoeficinet = Math.round(vecinatate);
   const closestNeuronCoords = closestNeuron.matrixCoord;
 
-  
+  const vicinityArray = generalVicinity(
+    closestNeuronCoords,
+    vecinatateCoeficinet,
+    neuroni,
+  );
 
+  const neuroniVecini = getNeuroniVecini(neuroni, vicinityArray);
+
+  return neuroniVecini
+}
+
+function getNeuroniVecini(neuroni, coords) {
+  const intermediateArray = [];
+
+  neuroni.forEach((neuron) => {
+    const temp = coords.find(
+      (coord) =>
+        coord.row === neuron.matrixCoord.row &&
+        coord.col === neuron.matrixCoord.col,
+    );
+    if (temp) {
+      intermediateArray.push(neuron);
+    }
+  });
+  return intermediateArray;
+}
+
+function generalVicinity(closestNeuronCoords, level, neuroni) {
+  const width = Math.sqrt(neuroni.length);
+  const x = closestNeuronCoords.row;
+  const y = closestNeuronCoords.col;
+
+  const generalLevelArray = [];
+
+  for (
+    let i = x - level < 0 ? 0 : x - level;
+    i < (x + level > width ? width : x + level);
+    i++
+  ) {
+    for (
+      let j = y - level < 0 ? 0 : y - level;
+      j < (y + level > width ? width : y + level);
+      j++
+    ) {
+      generalLevelArray.push({
+        row: i,
+        col: j,
+      });
+    }
+  }
+
+  return generalLevelArray;
+}
+
+function getLevel1Vicinity(closestNeuronCoords) {
+  const level1VicinityArray = [];
+  const x = closestNeuronCoords.row;
+  const y = closestNeuronCoords.col;
+
+  let sus = { x: x - 1, y: y };
+  let jos = { x: x + 1, y: y };
+  let stanga = { x: x, y: y - 1 };
+  let dreapta = { x: x, y: y + 1 };
+  let ss = { x: x - 1, y: y - 1 };
+  let sj = { x: x + 1, y: y - 1 };
+  let ds = { x: x - 1, y: y + 1 };
+  let dj = { x: x + 1, y: y + 1 };
+
+  level1VicinityArray.push(sus, jos, stanga, dreapta, sj, ss, ds, dj);
+
+  return level1VicinityArray;
 }
 
 function transformToMatrix(array) {
@@ -118,4 +186,44 @@ function assignMatrixCoordsToNeuron(neuroni) {
   });
 
   console.log(neuroni);
+}
+
+function Kohonen(vecinatate,coeficientInvatare,point,neuron){
+
+  const newCoords = {newX:null,newY:null}
+
+  newCoords.newX = neuron.x + coeficientInvatare*(point.x - neuron.x)
+  newCoords.newY = neuron.y + coeficientInvatare*(point.y - neuron.y)
+
+  neuron.x = newCoords.newX
+  neuron.y = newCoords.newY
+
+  return neuron
+}
+
+export function getNewNeuroni(point,neuroniVecini,vecinatate,coeficientInvatare){
+  const intermediateArray = []
+    neuroniVecini.forEach((neuron)=>{
+     const result = Kohonen(vecinatate,coeficientInvatare,point,neuron)
+      intermediateArray.push(result)
+    })
+
+  return intermediateArray
+}
+
+export function replaceNeuroni(oldNeuroni,newNeuroni){
+
+  const intermediateNeuroni = []
+
+  oldNeuroni.forEach((oldN)=>{
+    newNeuroni.forEach((newN) =>{
+      if (oldN.id === newN.id){
+        intermediateNeuroni.push(newN)
+      } else {
+        intermediateNeuroni.push(oldN)
+      }
+    })
+  })
+
+  return intermediateNeuroni
 }

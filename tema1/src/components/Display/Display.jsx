@@ -21,7 +21,7 @@ import CoordinatePlotterNeuroni from "../CoordinatePlotter/CoordinatePlotterNeur
 import {
   coeficinetInvatare,
   computeDistanceNeuroni,
-  generateNeuroni, getCloseNeurons, vecinatateFunction
+  generateNeuroni, getCloseNeurons, getNewNeuroni, replaceNeuroni, vecinatateFunction
 } from "../../functions/generateNeuroni.js";
 
 function Display(props) {
@@ -72,16 +72,25 @@ function Display(props) {
     setPoints(pointsAssignedToCentroids);
   };
 
+  // iti calculeaza neuronii updatati
   const handleComputedistanceNeuroni = () =>{
     const [closestNeuron,point] = computeDistanceNeuroni(points,neuroni)
     console.log(closestNeuron, point)
-    getCloseNeurons(closestNeuron,neuroni,vecinatate)
+    const neuroniiVecini = getCloseNeurons(closestNeuron,neuroni,vecinatate)
+    const newNeuroni = getNewNeuroni(point,neuroniiVecini,vecinatate,coeficientInvatare)
+    const finalNeuroni =  replaceNeuroni(newNeuroni,neuroniiVecini)
+
+    setNeuroni(finalNeuroni)
+    setEpocaCurenta(prevState => prevState + 1)
   }
 
+  /**
+   *
+   * iti pune neuronii pe harta
+   */
   const handleNeuroni = () =>{
     const intermediateNeuroni = generateNeuroni(100);
-    console.log(intermediateNeuroni," neuroni ")
-    setNeuroni(intermediateNeuroni)
+     setNeuroni(intermediateNeuroni)
   }
 
   const handleComputeCentrulDeGreutate = () => {
@@ -171,6 +180,7 @@ function Display(props) {
             <p>Cate epoci dorim ? </p>
             <input type="text" value={epociDorite} onChange={(e)=>setEpociDorite(e.target.value)}/>
             <p>{epociDorite}</p>
+            <p>{epocaCurenta}</p>
           </div>
           <button onClick={handleNeuroni}>Genereaza neuroni</button>
           <button onClick={handleComputedistanceNeuroni} >Calculeaza distanta</button>
