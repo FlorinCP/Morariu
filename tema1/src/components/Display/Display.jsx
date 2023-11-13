@@ -36,6 +36,7 @@ function Display(props) {
   const [epociDorite,setEpociDorite] = useState(10)
   const [vecinatate,setVecinatate] = useState()
   const [coeficientInvatare,setCoeficientInvatare] = useState()
+  const [showNumbers,setShowNumbers] = useState(false)
 
   useEffect(() => {
       if (epocaCurenta !== null || epociDorite !== null){
@@ -77,23 +78,19 @@ function Display(props) {
    *
    */
   const handleComputedistanceNeuroni = () =>{
-    const randomPointIndex = getRandomPointIndex(points.length)
+
+    const randomPointIndex = getRandomPointIndex(10000)
     const randomPoint = points[randomPointIndex]
     const closestNeuron = computeDistanceNeuroni(randomPoint,neuroni)
 
-    console.log("neuronii vechi sunt : ",neuroni)
     const neuroniiVecini = getCloseNeurons(closestNeuron,neuroni,vecinatate)
-
-    console.log("neuronii vecini ",neuroniiVecini)
 
     const newNeuroni = getNewNeuroni(randomPoint,neuroniiVecini,vecinatate,coeficientInvatare)
     const finalNeuroni =  replaceNeuroni(neuroni,newNeuroni)
 
-    console.log("neuronii noi ",newNeuroni)
-    console.log("neuronii finali", finalNeuroni)
-
     setNeuroni(finalNeuroni)
     setEpocaCurenta(prevState => prevState + 1)
+
   }
 
   /**
@@ -196,6 +193,7 @@ function Display(props) {
           </div>
           <button onClick={handleNeuroni}>Genereaza neuroni</button>
           <button onClick={handleComputedistanceNeuroni} >Calculeaza distanta</button>
+        <button onClick={()=> setShowNumbers(prevState => !prevState)}>{showNumbers ? "Ascunde Detaliile" : "Arata Detaliile"}</button>
       </div>
     );
   }
@@ -219,6 +217,7 @@ function Display(props) {
           dataPoints={points}
           isKnown={false}
           neuroni={neuroni}
+          showNumbers={showNumbers}
         />
       </>
     );

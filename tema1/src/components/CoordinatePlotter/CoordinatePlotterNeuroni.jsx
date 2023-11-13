@@ -3,7 +3,7 @@ import style from "../Display/Display.module.css";
 import { getPointColor } from "../../functions/getPointColor.js";
 import { convertToScreenCoordinates } from "../../functions/generateCoordinates.js";
 
-function CoordinatePlotterNeuroni({ dataPoints, isKnown, neuroni }) {
+function CoordinatePlotterNeuroni({ dataPoints, isKnown, neuroni,showNumbers }) {
   // const [hoveredPoint, setHoveredPoint] = useState(1);
   //
   // useEffect(() => {
@@ -62,9 +62,13 @@ function CoordinatePlotterNeuroni({ dataPoints, isKnown, neuroni }) {
                 cursor: "pointer",
               }}
             >
-              <div className={style.info} style={{ color: "black" }}>
-                {point.id}
-              </div>
+                {
+                    showNumbers && (
+                        <div className={style.info} style={{ color: "black" }}>
+                            {point.id}
+                        </div>
+                    )
+                }
             </div>
           );
         })}
